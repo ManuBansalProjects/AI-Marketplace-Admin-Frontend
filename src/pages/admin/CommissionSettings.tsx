@@ -10,25 +10,29 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Percent } from "lucide-react";
+import { adminAuth } from "@/lib/adminAuth";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface CommissionSetting {
   id: string;
-  setting_name: string;
+  // setting_name: string;
   commission_rate: number;
   description: string | null;
-  is_active: boolean;
-  created_at: string;
+  // is_active: boolean;
+  updatedAt: string;
 }
 
 const CommissionSettings = () => {
   const [settings, setSettings] = useState<CommissionSetting[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSetting, setEditingSetting] = useState<CommissionSetting | null>(null);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
-    setting_name: "",
+    // setting_name: "",
     commission_rate: "",
     description: "",
-    is_active: true,
+    // is_active: true,
   });
 
   useEffect(() => {
@@ -42,6 +46,20 @@ const CommissionSettings = () => {
     //   .order("created_at", { ascending: false });
 
     // if (data) setSettings(data);
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/api/mongo/global-settings`, {
+        headers: adminAuth.getApiHeaders()
+      });
+      const data = await response.json();
+      if (data?.result) setSettings(data.result);
+    } catch (error) {
+      console.error('Error fetching global settings:', error);
+      toast.error("Failed to fetch global settings");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,15 +99,48 @@ const CommissionSettings = () => {
     // } catch (error: any) {
     //   toast.error(error.message);
     // }
+
+   try {
+      setLoading(true);
+
+      const payload = {
+        commission_rate: Number(formData.commission_rate),
+        description: formData.description,
+      };
+
+      const response = await fetch(`${API_URL}/api/mongo/global-settings`, {
+        method: "PUT", // <-- PUT method
+        headers: {
+          ...adminAuth.getApiHeaders(), // your auth headers
+          "Content-Type": "application/json" // important for sending JSON
+        },
+        body: JSON.stringify(payload) // convert JS object to JSON
+      });
+
+      if (!response.ok) {
+        // Handle non-2xx responses
+        const errData = await response.json();
+        throw new Error(errData.message || "Failed to update settings");
+      }
+
+      fetchSettings();
+      toast.success("Settings updated successfully");
+    } catch (error) {
+      console.error("Error updating settings:", error);
+      toast.error(error.message || "Failed to update settings");
+    } finally {
+      setLoading(false);
+    }
+
   };
 
   const handleEdit = (setting: CommissionSetting) => {
     setEditingSetting(setting);
     setFormData({
-      setting_name: setting.setting_name,
+      // setting_name: setting.setting_name,
       commission_rate: setting.commission_rate.toString(),
       description: setting.description || "",
-      is_active: setting.is_active,
+      // is_active: setting.is_active,
     });
     setIsDialogOpen(true);
   };
@@ -113,10 +164,10 @@ const CommissionSettings = () => {
 
   const resetForm = () => {
     setFormData({
-      setting_name: "",
+      // setting_name: "",
       commission_rate: "",
       description: "",
-      is_active: true,
+      // is_active: true,
     });
     setEditingSetting(null);
   };
@@ -132,12 +183,12 @@ const CommissionSettings = () => {
           setIsDialogOpen(open);
           if (!open) resetForm();
         }}>
-          <DialogTrigger asChild>
+          {/* <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
               Add Setting
             </Button>
-          </DialogTrigger>
+          </DialogTrigger> */}
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
@@ -145,7 +196,7 @@ const CommissionSettings = () => {
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="setting_name">Setting Name</Label>
                 <Input
                   id="setting_name"
@@ -154,7 +205,7 @@ const CommissionSettings = () => {
                   required
                   placeholder="e.g., Premium, Standard"
                 />
-              </div>
+              </div> */}
               <div className="space-y-2">
                 <Label htmlFor="commission_rate">Commission Rate (%)</Label>
                 <Input
@@ -178,17 +229,20 @@ const CommissionSettings = () => {
                   placeholder="Optional description"
                 />
               </div>
-              <div className="flex items-center space-x-2">
+              {/* <div className="flex items-center space-x-2">
                 <Switch
                   id="is_active"
                   checked={formData.is_active}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                 />
                 <Label htmlFor="is_active">Active</Label>
-              </div>
+              </div> */}
+
               <Button type="submit" className="w-full">
-                {editingSetting ? "Update Setting" : "Create Setting"}
+                {/* {editingSetting ? "Update Setting" : "Create Setting"} */}
+                Update Setting
               </Button>
+
             </form>
           </DialogContent>
         </Dialog>
@@ -203,33 +257,33 @@ const CommissionSettings = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Setting Name</TableHead>
+                  {/* <TableHead>Setting Name</TableHead> */}
                   <TableHead>Commission Rate</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
+                  {/* <TableHead>Status</TableHead> */}
+                  <TableHead>Updated At</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {settings.map((setting) => (
                   <TableRow key={setting.id}>
-                    <TableCell className="font-medium">{setting.setting_name}</TableCell>
+                    {/* <TableCell className="font-medium">{setting.setting_name}</TableCell> */}
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <Percent className="h-4 w-4" />
-                        {setting.commission_rate}%
+                        {setting.commission_rate}
                       </div>
                     </TableCell>
                     <TableCell className="max-w-xs truncate">{setting.description || "-"}</TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <span className={`px-2 py-1 rounded text-xs ${
                         setting.is_active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
                       }`}>
                         {setting.is_active ? "Active" : "Inactive"}
                       </span>
-                    </TableCell>
-                    <TableCell>{new Date(setting.created_at).toLocaleDateString()}</TableCell>
+                    </TableCell> */}
+                    <TableCell>{new Date(setting.updatedAt).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button
@@ -239,13 +293,13 @@ const CommissionSettings = () => {
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button
+                        {/* <Button
                           variant="destructive"
                           size="sm"
                           onClick={() => handleDelete(setting.id)}
                         >
                           <Trash2 className="h-4 w-4" />
-                        </Button>
+                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>

@@ -40,6 +40,7 @@ const Deals = () => {
 
   const fetchProducts = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_URL}/api/mongo/products`, {
         headers: adminAuth.getApiHeaders()
       });
