@@ -54,7 +54,7 @@ const Earnings = () => {
       const headers = adminAuth.getApiHeaders();
       const [earningsRes, paymentsRes] = await Promise.all([
         fetch(`${API_URL}/api/mongo/earnings`, { headers }),
-        fetch('/api/mongo/payments', { headers })
+        fetch(`${API_URL}/api/mongo/payments`, { headers })
       ]);
       
       const earningsData = await earningsRes.json();
