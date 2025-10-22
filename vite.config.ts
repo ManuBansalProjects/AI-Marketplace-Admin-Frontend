@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
     proxy: {
       // Proxy API requests to your backend
       '/api': {
-        target: "https://ai-marketplace-admin-backend.vercel.app",
+        target: process.env.VITE_API_URL,
         // target: "http://localhost:4001",
         changeOrigin: true,
       },
