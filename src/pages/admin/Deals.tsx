@@ -8,6 +8,9 @@ import { toast } from "sonner";
 import { Search, DollarSign, Package, ShoppingCart } from "lucide-react";
 import { adminAuth } from "@/lib/adminAuth";
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface MongoProduct {
   _id: string;
   title: string;
@@ -37,7 +40,7 @@ const Deals = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/mongo/products', {
+      const response = await fetch(`${API_URL}/api/mongo/products`, {
         headers: adminAuth.getApiHeaders()
       });
       const data = await response.json();

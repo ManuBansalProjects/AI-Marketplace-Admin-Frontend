@@ -6,6 +6,9 @@ import { DollarSign, TrendingUp, Percent, CreditCard, Package } from "lucide-rea
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { adminAuth } from "@/lib/adminAuth";
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface MongoEarnings {
   totalTaskValue: number;
   estimatedCommission: number;
@@ -50,7 +53,7 @@ const Earnings = () => {
     try {
       const headers = adminAuth.getApiHeaders();
       const [earningsRes, paymentsRes] = await Promise.all([
-        fetch('/api/mongo/earnings', { headers }),
+        fetch(`${API_URL}/api/mongo/earnings`, { headers }),
         fetch('/api/mongo/payments', { headers })
       ]);
       

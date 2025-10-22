@@ -4,6 +4,8 @@ import { Users, ShoppingBag, DollarSign, TrendingUp, UserPlus, Package } from "l
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { adminAuth } from "@/lib/adminAuth";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface MongoAnalytics {
   users: {
     total: number;
@@ -44,8 +46,8 @@ const Dashboard = () => {
     try {
       const headers = adminAuth.getApiHeaders();
       const [analyticsRes, earningsRes] = await Promise.all([
-        fetch('/api/mongo/analytics', { headers }),
-        fetch('/api/mongo/earnings', { headers })
+        fetch(`${API_URL}/api/mongo/analytics`, { headers }),
+        fetch(`${API_URL}/api/mongo/earnings`, { headers })
       ]);
       
       const analyticsData = await analyticsRes.json();

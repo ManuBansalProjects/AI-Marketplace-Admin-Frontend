@@ -11,6 +11,9 @@ import { toast } from "sonner";
 import { UserCheck, UserX, DollarSign, Search, Shield } from "lucide-react";
 import { adminAuth } from "@/lib/adminAuth";
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface MongoUser {
   _id: string;
   name: string;
@@ -38,7 +41,7 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('/api/mongo/users', {
+      const response = await fetch(`${API_URL}/api/mongo/users`, {
         headers: adminAuth.getApiHeaders()
       });
       const data = await response.json();
@@ -53,7 +56,7 @@ const Users = () => {
 
   const handleToggleUserStatus = async (userId: string, currentBlocked?: boolean) => {
     try {
-      const response = await fetch(`/api/mongo/users/${userId}/status`, {
+      const response = await fetch(`${API_URL}/api/mongo/users/${userId}/status`, {
         method: 'PATCH',
         headers: adminAuth.getApiHeaders(),
         body: JSON.stringify({ blocked: !currentBlocked })
@@ -80,7 +83,7 @@ const Users = () => {
     }
 
     try {
-      const response = await fetch('/api/mongo/payments', {
+      const response = await fetch(`${API_URL}/api/mongo/payments`, {
         method: 'POST',
         headers: adminAuth.getApiHeaders(),
         body: JSON.stringify({
